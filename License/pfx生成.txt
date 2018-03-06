@@ -1,0 +1,25 @@
+OpenSSL生成.key、.crt、.pfx证书(Windows下)
+最近在对接招行一网通支付，让人意想不到的是，在系统中使用过一次一网通后，就得永远使用这个一网通账户支付，除非解绑一网通支付账户的的支付协议,在对接支付接口时，不要任何证书的加密校验，结果在对接解绑支付解析接口时，竟然让生产正式、使用证书加密，本人搞PHP的，不会用java的openSSL，只能百度去，现在把自己的百度到的结果分享记录一下。
+首先需要下载安装编译好的OpenSSL，地址:http://pan.baidu.com/s/1bWRins 密码：7rm0
+建议直接解压到C盘，打开cmd窗口，cd到C:\OpenSSL-Win64\bin文件夹目录，开始以下的操作
+1、生成.key文件
+openssl genrsa -des3 -out server.key 2048
+中间会提示输入密码(重复输入两次)，要记住这个密码；
+这时会在C:\OpenSSL-Win64\bin目录下生成server.key文件。
+2、生成.crt文件
+openssl req -new -x509 -key server.key -out server.crt -days 3650
+会提示输入server.key的密码
+开始输入Country Name：CN
+State or Province Name：SH
+Locality Name：shanghai
+Organization Name：这个可以忽略
+Organizational Unit Name：这个可以忽略
+Common Name：这个可以忽略
+Email Address：填写一个非QQ的邮箱地址
+这时会在C:\OpenSSL-Win64\bin目录下生成server.crt文件。
+3、生成.pfx文件
+openssl pkcs12 -export -out server.pfx -inkey server.key -in server.crt
+提示输入server.key文件的密码
+提示输入即将生成的.pfx文件的密码(需要输入两次)
+这时会在C:\OpenSSL-Win64\bin目录下生成server.pfx文件。
+到此证书已经准备好了，招行的解绑支付协议也已经大功告成！！！
